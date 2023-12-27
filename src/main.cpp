@@ -3,7 +3,7 @@
 //
 
 #include <iostream>
-#include "../include/Player.h"
+#include "Player.h"
 
 int main() {
     Player player;
