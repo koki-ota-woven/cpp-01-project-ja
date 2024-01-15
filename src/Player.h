@@ -15,11 +15,13 @@ class Player {
     
     public:
         Player();
-        void turnLeft();
-        void turnRight();
-        void accelerate();
-        void decelerate();
-        void stop();
+        std::string goLeft();
+        std::string goRight();
+        std::string goUp();
+        std::string goDown();
+        void accelerate(int* velocity);
+        void decelerate(int* velocity);
+        void stop(int* velocity);
         void refuel();
         void showInfo();
 };

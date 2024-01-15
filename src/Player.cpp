@@ -11,27 +11,36 @@ Player::Player() {
     location = "Start";
 }
 
-void Player::turnLeft() {
-    std::cout << "Turning left" << std::endl;
+std::string Player::goLeft() {
+    return "-x";
 }
 
-void Player::turnRight() {
-    std::cout << "Turning right" << std::endl;
+std::string Player::goRight() {
+    return "+x";
 }
 
-void Player::accelerate() {
-    speed += 10;
-    std::cout << "Accelerating. Current speed: " << speed << std::endl;
+std::string Player::goUp() {
+    return "-y";
 }
 
-void Player::decelerate() {
-    speed -= 10;
-    std::cout << "Decelerating. Current speed: " << speed << std::endl;
+std::string Player::goDown() {
+    return "+y";
 }
 
-void Player::stop() {
-    speed = 0;
-    std::cout << "Stopping" << std::endl;
+void Player::accelerate(int* car_velocity) {
+    if (*car_velocity <= 3) {
+        *car_velocity += 1;
+    }
+}
+
+void Player::decelerate(int* car_velocity) {
+    if (*car_velocity > 0) {
+        *car_velocity -= 1;
+    }
+}
+
+void Player::stop(int* car_velocity) {
+    *car_velocity = 0;
 }
 
 void Player::refuel() {
