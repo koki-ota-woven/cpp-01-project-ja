@@ -8,20 +8,20 @@
 #include <string>
 
 class Player {
-private:
-    int speed;
-    int fuel;
-    std::string location;
-
-public:
-    Player();
-    void turnLeft();
-    void turnRight();
-    void accelerate();
-    void decelerate();
-    void stop();
-    void refuel();
-    void showInfo();
+    private:
+        int speed;
+        int fuel;
+        std::string location;
+    
+    public:
+        Player();
+        void turnLeft();
+        void turnRight();
+        void accelerate();
+        void decelerate();
+        void stop();
+        void refuel();
+        void showInfo();
 };
 
 #endif // PLAYER_H
