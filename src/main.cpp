@@ -7,9 +7,9 @@
 #include "Player.h"
 #include <ncurses.h> // Include ncurses library
 
-const int row = 52;
-const int column = 72;
-const int reload_time = 1000;
+const int row = 20;
+const int column = 20;
+const int reload_time = 100;
 const char car_icon = 'O';
 
 std::atomic_bool inputReady(false);
@@ -18,11 +18,8 @@ std::string input;
 void getInput() {
     while (true) {
         int ch = getch(); // Non-blocking input using ncurses
-
-        if (ch != ERR) {
-            input = static_cast<char>(ch);
-            inputReady = true;
-        }
+        input = static_cast<char>(ch);
+        inputReady = true;
     }
 }
 

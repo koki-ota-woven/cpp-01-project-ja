@@ -22,7 +22,7 @@ cd cpp-01-project-ja
 3. ソースコードをコンパイルします。
     - GCCを使用する場合:
 ```bash
-g++ src/main.cpp src/Player.cpp -o game
+g++ -std=c++17 -o game src/main.cpp src/Player.cpp -lncurses
 ```
 
 - Clangを使用する場合:
