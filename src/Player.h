@@ -9,10 +9,10 @@
 
 class Player {
     private:
-        int speed;
-        int fuel;
-        std::string location;
-    
+        int _speed;
+        int _fuel;
+        int _passenger;
+
     public:
         Player();
         std::string goLeft();

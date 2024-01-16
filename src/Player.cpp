@@ -6,9 +6,9 @@
 #include <iostream>
 
 Player::Player() {
-    speed = 0;
-    fuel = 100;
-    location = "Start";
+    _speed = 1;
+    _fuel = 100;
+    _passenger = 0;
 }
 
 std::string Player::goLeft() {
@@ -44,12 +44,10 @@ void Player::stop(int* car_velocity) {
 }
 
 void Player::refuel() {
-    fuel = 100;
-    std::cout << "Refueling. Fuel level: " << fuel << std::endl;
+    _fuel = 100;
+    std::cout << "Refueling. Fuel level: " << _fuel << std::endl;
 }
 
 void Player::showInfo() {
-    std::cout << "Current speed: " << speed << std::endl;
-    std::cout << "Fuel level: " << fuel << std::endl;
-    std::cout << "Location: " << location << std::endl;
+    std::cout << "Current speed: " << _speed << "   Fuel level: " << _fuel << std::endl;
 }

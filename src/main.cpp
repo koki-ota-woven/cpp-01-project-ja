@@ -3,41 +3,49 @@
 #include <thread>
 #include <atomic>
 #include <string>
-#include <iomanip> // Include iomanip for formatting
 #include "Player.h"
-#include <ncurses.h> // Include ncurses library
 
-const int row = 20;
-const int column = 20;
-const int reload_time = 100;
+const int row = 50;
+const int column = 100;
+const int reload_time = 1000;
 const char car_icon = 'O';
+const char fuel_station_icon = 'F';
+const char passenger_icon = 'P';
 
 std::atomic_bool inputReady(false);
 std::string input;
 
 void getInput() {
     while (true) {
-        int ch = getch(); // Non-blocking input using ncurses
-        input = static_cast<char>(ch);
-        inputReady = true;
+        std::string command;
+        std::cin >> command;
+
+        if (command != "") {
+            input = command;
+            inputReady = true;
+        }
     }
 }
 
 void printRace(char array1[row][column]) {
     for (int i = 0; i < row; i++) {
         for (int j = 0; j < column; j++) {
-            printw("%2c", array1[i][j]); // Use printw for ncurses
+            std::cout << array1[i][j];
         }
-        printw("\n");
+        std::cout << std::endl;
     }
 }
 
 void initRace(char array2[row][column]) {
     for (int i = 0; i < row; i++) {
         for (int j = 0; j < column; j++) {
-            if (i == 0 || i == row - 1) {
+            if (i == 0) {
                 array2[i][j] = '-';
-            } else if (j == 0 || j == column - 1) {
+            } else if (i == row-1) {
+                array2[i][j] = '-';
+            } else if (i > 0 && j == 0) {
+                array2[i][j] = '|';
+            } else if (j == column-1) {
                 array2[i][j] = '|';
             } else {
                 array2[i][j] = ' ';
@@ -47,40 +55,40 @@ void initRace(char array2[row][column]) {
 }
 
 int main() {
-    initscr(); // Initialize ncurses
-    timeout(0); // Set non-blocking input mode
-    keypad(stdscr, true); // Enable keypad input
-    noecho(); // Disable automatic echoing of input
-
     std::thread inputThread(getInput);  // Start a thread for user input
     Player player;
     char track[row][column];
     int car_position_x = 5;
     int car_position_y = 1;
+    int fuel_position_x = 30;
+    int fuel_position_y = 30;
+    int passenger_position_x = 40;
+    int passenger_position_y = 20;
     int velocity = 1;
     std::string direction = "+y";
 
     while (true) {  // Continuous game loop
-        clear();  // Clear the screen before printing new frame
-
         initRace(track);
-        if (car_position_x > 0 && car_position_x < column - 1 && car_position_y > 0 && car_position_y < row - 1) {
-            track[car_position_y][car_position_x] = car_icon;
-        }
-
+        track[fuel_position_y][fuel_position_x] = fuel_station_icon;
+        track[car_position_y][car_position_x] = car_icon;
+        track[passenger_position_y][passenger_position_x] = passenger_icon;
         printRace(track);
-        refresh();  // Refresh the screen to update the changes
-
+        player.showInfo();
+        std::cout<<std::endl;
+        std::cout<<std::endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(reload_time));
 
-        // Update car position based on direction
-        if (direction == "+y" && car_position_y < row - 2) {
+        // if ((car_position_y == passenger_position_y) && (car_position_x == passenger_position_x)){
+        //     Person._fuel += 1;
+        // }
+
+        if (direction == "+y") {
             car_position_y += velocity;
-        } else if (direction == "-y" && car_position_y > 1) {
+        } else if (direction == "-y") {
             car_position_y -= velocity;
-        } else if (direction == "+x" && car_position_x < column - 2) {
+        } else if (direction == "+x") {
             car_position_x += velocity;
-        } else if (direction == "-x" && car_position_x > 1) {
+        } else if (direction == "-x") {
             car_position_x -= velocity;
         }
 
@@ -102,19 +110,16 @@ int main() {
                 player.stop(&velocity);
             } else if (input == "r") {
                 player.refuel();
-            } else if (input == "help") {
-                player.showInfo();
             } else if (input == "q") {
                 break;  // Exit the game loop when the user enters "q"
             } else {
-                printw("!!!!Invalid command!!!!\n");
+                std::cout << "!!!!Invalid command!!!!" << std::endl;
             }
 
             inputReady = false;  // Reset the flag
         }
     }
 
-    endwin(); // Cleanup ncurses
     inputThread.join();  // Wait for the input thread to finish
     return 0;
 }
