@@ -71,7 +71,7 @@ int main() {
 
     while (true) {  // Continuous game loop
         if ((player.getPassenger() == 1) &&
-        (player_position_x == goal_position_x) && (player_position_x == goal_position_y)){
+        (player_position_x == goal_position_x) && (player_position_y == goal_position_y)){
             std::cout << "Clear: Well Done!!" <<std::endl;
             break;
         }
@@ -93,7 +93,7 @@ int main() {
         player.consumeFuel();
         std::this_thread::sleep_for(std::chrono::milliseconds(reload_time));
 
-        if ((player_position_x == fuel_position_x) && (player_position_x == fuel_position_y)){
+        if ((player_position_x == fuel_position_x) && (player_position_y == fuel_position_y)){
             player.refuel();
         }
 
