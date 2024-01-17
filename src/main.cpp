@@ -8,9 +8,10 @@
 const int row = 50;
 const int column = 100;
 const int reload_time = 1000;
-const char car_icon = 'O';
+const char player_icon = 'O';
 const char fuel_station_icon = 'F';
 const char passenger_icon = 'P';
+const char goal_icon = 'G';
 
 std::atomic_bool inputReady(false);
 std::string input;
@@ -58,38 +59,49 @@ int main() {
     std::thread inputThread(getInput);  // Start a thread for user input
     Player player;
     char track[row][column];
-    int car_position_x = 5;
-    int car_position_y = 1;
+    int player_position_x = 5;
+    int player_position_y = 1;
     int fuel_position_x = 30;
     int fuel_position_y = 30;
     int passenger_position_x = 40;
     int passenger_position_y = 20;
-    int velocity = 1;
+    int goal_position_x = 95;
+    int goal_position_y = 46;
     std::string direction = "+y";
 
     while (true) {  // Continuous game loop
+        if (player.getFuel() <= 0){
+            std::cout << "GAME OVER" <<std::endl;
+            break;
+        }
         initRace(track);
         track[fuel_position_y][fuel_position_x] = fuel_station_icon;
-        track[car_position_y][car_position_x] = car_icon;
+        track[player_position_y][player_position_x] = player_icon;
         track[passenger_position_y][passenger_position_x] = passenger_icon;
+        track[goal_position_y][goal_position_x] = goal_icon;
         printRace(track);
         player.showInfo();
         std::cout<<std::endl;
         std::cout<<std::endl;
+        player.consumeFuel();
         std::this_thread::sleep_for(std::chrono::milliseconds(reload_time));
 
-        // if ((car_position_y == passenger_position_y) && (car_position_x == passenger_position_x)){
-        //     Person._fuel += 1;
-        // }
+        if ((player_position_x == fuel_position_x) && (player_position_x == fuel_position_y)){
+            player.refuel();
+        }
+
+        if ((player_position_x == passenger_position_x) && (player_position_x == passenger_position_y)){
+            player.passengerRide();
+        }
 
         if (direction == "+y") {
-            car_position_y += velocity;
+            player_position_y += player.getSpeed();
         } else if (direction == "-y") {
-            car_position_y -= velocity;
+            player_position_y -= player.getSpeed();
         } else if (direction == "+x") {
-            car_position_x += velocity;
+            player_position_x += player.getSpeed();
         } else if (direction == "-x") {
-            car_position_x -= velocity;
+            player_position_x -= player.getSpeed();
         }
 
         if (inputReady) {
@@ -103,11 +115,11 @@ int main() {
             } else if (input == "j") {
                 direction = player.goDown();
             } else if (input == "a") {
-                player.accelerate(&velocity);
+                player.accelerate();
             } else if (input == "d") {
-                player.decelerate(&velocity);
+                player.decelerate();
             } else if (input == "s") {
-                player.stop(&velocity);
+                player.stop();
             } else if (input == "r") {
                 player.refuel();
             } else if (input == "q") {

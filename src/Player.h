@@ -9,9 +9,9 @@
 
 class Player {
     private:
-        int _speed;
-        int _fuel;
-        int _passenger;
+        int speed;
+        int fuel;
+        int passenger;
 
     public:
         Player();
@@ -19,10 +19,14 @@ class Player {
         std::string goRight();
         std::string goUp();
         std::string goDown();
-        void accelerate(int* velocity);
-        void decelerate(int* velocity);
-        void stop(int* velocity);
+        void accelerate();
+        void decelerate();
+        void stop();
         void refuel();
+        int getSpeed();
+        int getFuel();
+        void consumeFuel();
+        void passengerRide();
         void showInfo();
 };
 

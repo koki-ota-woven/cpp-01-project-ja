@@ -6,9 +6,9 @@
 #include <iostream>
 
 Player::Player() {
-    _speed = 1;
-    _fuel = 100;
-    _passenger = 0;
+    speed = 1;
+    fuel = 100;
+    passenger = 0;
 }
 
 std::string Player::goLeft() {
@@ -27,27 +27,47 @@ std::string Player::goDown() {
     return "+y";
 }
 
-void Player::accelerate(int* car_velocity) {
-    if (*car_velocity <= 3) {
-        *car_velocity += 1;
+void Player::accelerate() {
+    if (speed <= 3){
+        speed += 1;
     }
 }
 
-void Player::decelerate(int* car_velocity) {
-    if (*car_velocity > 0) {
-        *car_velocity -= 1;
+void Player::decelerate() {
+    if (speed > 0) {
+        speed -= 1;
     }
 }
 
-void Player::stop(int* car_velocity) {
-    *car_velocity = 0;
+void Player::stop() {
+    speed = 0;
 }
 
 void Player::refuel() {
-    _fuel = 100;
-    std::cout << "Refueling. Fuel level: " << _fuel << std::endl;
+    fuel = 100;
+    std::cout << "Refueling. Fuel level: " << fuel << std::endl;
+}
+
+int Player::getSpeed() {
+    return speed;
+}
+
+int Player::getFuel() {
+    return fuel;
+}
+
+int Player::getPassenger() {
+    return passenger;
+}
+
+void Player::consumeFuel() {
+    fuel -= speed;
+}
+
+void Player::passengerRide() {
+    passenger++;
 }
 
 void Player::showInfo() {
-    std::cout << "Current speed: " << _speed << "   Fuel level: " << _fuel << std::endl;
+    std::cout << "Current speed: " << speed << "   Fuel level: " << fuel << std::endl;
 }
