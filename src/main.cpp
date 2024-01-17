@@ -85,6 +85,8 @@ int main() {
         track[player_position_y][player_position_x] = player_icon;
         track[goal_position_y][goal_position_x] = goal_icon;
 
+        std::cout << "Mission: Take a passenger to goal" << std::endl;
+        std::cout << "ICON  O: player, P: passenger, F: gas station, G: Goal" << std::endl;
         printRace(track);
         player.showInfo();
         std::cout << std::endl << std::endl;
