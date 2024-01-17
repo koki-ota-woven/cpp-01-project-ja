@@ -44,7 +44,7 @@ void initRace(char array2[row][column]) {
                 array2[i][j] = '-';
             } else if (i == row-1) {
                 array2[i][j] = '-';
-            } else if (i > 0 && j == 0) {
+            } else if (j == 0) {
                 array2[i][j] = '|';
             } else if (j == column-1) {
                 array2[i][j] = '|';
@@ -58,7 +58,7 @@ void initRace(char array2[row][column]) {
 int main() {
     std::thread inputThread(getInput);  // Start a thread for user input
     Player player;
-    char track[row][column];
+
     int player_position_x = 5;
     int player_position_y = 1;
     int fuel_position_x = 30;
@@ -70,45 +70,40 @@ int main() {
     std::string direction = "+y";
 
     while (true) {  // Continuous game loop
-        if ((player.getPassenger() == 1) &&
-        (player_position_x == goal_position_x) && (player_position_y == goal_position_y)){
-            std::cout << "Clear: Well Done!!" <<std::endl;
+        if (player.getFuel() <= 0) {
+            std::cout << "GAME OVER: There is no fuel" << std::endl;
             break;
         }
-        if (player.getFuel() <= 0){
-            std::cout << "GAME OVER: There is no fuel" <<std::endl;
-            break;
-        }
+
+        char track[row][column];
         initRace(track);
-        track[fuel_position_y][fuel_position_x] = fuel_station_icon;
-        if (player.getPassenger() == 0){
+
+        if (player.getPassenger() == 0) {
             track[passenger_position_y][passenger_position_x] = passenger_icon;
         }
-        track[goal_position_y][goal_position_x] = goal_icon;
+        track[fuel_position_y][fuel_position_x] = fuel_station_icon;
         track[player_position_y][player_position_x] = player_icon;
+        track[goal_position_y][goal_position_x] = goal_icon;
+
         printRace(track);
         player.showInfo();
-        std::cout<<std::endl;
-        std::cout<<std::endl;
+        std::cout << std::endl << std::endl;
+
         player.consumeFuel();
         std::this_thread::sleep_for(std::chrono::milliseconds(reload_time));
 
-        if ((player_position_x == fuel_position_x) && (player_position_y == fuel_position_y)){
+        if ((player_position_x == fuel_position_x) && (player_position_y == fuel_position_y)) {
             player.refuel();
         }
 
-        if ((player_position_x == passenger_position_x) && (player_position_y == passenger_position_y)){
+        if ((player_position_x == passenger_position_x) && (player_position_y == passenger_position_y)) {
             player.passengerRide();
         }
 
-        if (direction == "+y") {
-            player_position_y += player.getSpeed();
-        } else if (direction == "-y") {
-            player_position_y -= player.getSpeed();
-        } else if (direction == "+x") {
-            player_position_x += player.getSpeed();
-        } else if (direction == "-x") {
-            player_position_x -= player.getSpeed();
+        if ((player.getPassenger() == 1) &&
+            (player_position_x == goal_position_x) && (player_position_y == goal_position_y)) {
+            std::cout << "Clear: Well Done!!" << std::endl;
+            break;
         }
 
         if (inputReady) {
@@ -136,9 +131,18 @@ int main() {
             }
             inputReady = false;  // Reset the flag
         }
+
+        if (direction == "+y") {
+            player_position_y += player.getSpeed();
+        } else if (direction == "-y") {
+            player_position_y -= player.getSpeed();
+        } else if (direction == "+x") {
+            player_position_x += player.getSpeed();
+        } else if (direction == "-x") {
+            player_position_x -= player.getSpeed();
+        }
     }
 
     inputThread.join();  // Wait for the input thread to finish
     return 0;
 }
-
