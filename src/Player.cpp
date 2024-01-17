@@ -1,7 +1,3 @@
-//
-// Created by koki-ota on 23/12/27.
-//
-
 #include "Player.h"
 #include <iostream>
 
@@ -45,7 +41,7 @@ void Player::stop() {
 
 void Player::refuel() {
     fuel = 100;
-    std::cout << "Refueling. Fuel level: " << fuel << std::endl;
+    std::cout << "Refueled" << std::endl;
 }
 
 int Player::getSpeed() {
@@ -65,9 +61,10 @@ void Player::consumeFuel() {
 }
 
 void Player::passengerRide() {
-    passenger++;
+    passenger += 1;
+    std::cout << "A passenger rides" << std::endl;
 }
 
 void Player::showInfo() {
-    std::cout << "Current speed: " << speed << "   Fuel level: " << fuel << std::endl;
+    std::cout << "Current speed: " << speed << ",   Fuel level: " << fuel << ",   Passenger: " << passenger << std::endl;
 }

@@ -70,15 +70,22 @@ int main() {
     std::string direction = "+y";
 
     while (true) {  // Continuous game loop
+        if ((player.getPassenger() == 1) &&
+        (player_position_x == fuel_position_x) && (player_position_x == fuel_position_y)){
+            std::cout << "Clear: Well Done!!" <<std::endl;
+            break;
+        }
         if (player.getFuel() <= 0){
-            std::cout << "GAME OVER" <<std::endl;
+            std::cout << "GAME OVER: There is no fuel" <<std::endl;
             break;
         }
         initRace(track);
         track[fuel_position_y][fuel_position_x] = fuel_station_icon;
-        track[player_position_y][player_position_x] = player_icon;
-        track[passenger_position_y][passenger_position_x] = passenger_icon;
+        if (player.getPassenger() == 0){
+            track[passenger_position_y][passenger_position_x] = passenger_icon;
+        }
         track[goal_position_y][goal_position_x] = goal_icon;
+        track[player_position_y][player_position_x] = player_icon;
         printRace(track);
         player.showInfo();
         std::cout<<std::endl;
@@ -90,7 +97,7 @@ int main() {
             player.refuel();
         }
 
-        if ((player_position_x == passenger_position_x) && (player_position_x == passenger_position_y)){
+        if ((player_position_x == passenger_position_x) && (player_position_y == passenger_position_y)){
             player.passengerRide();
         }
 
@@ -127,7 +134,6 @@ int main() {
             } else {
                 std::cout << "!!!!Invalid command!!!!" << std::endl;
             }
-
             inputReady = false;  // Reset the flag
         }
     }

@@ -25,6 +25,7 @@ class Player {
         void refuel();
         int getSpeed();
         int getFuel();
+        int getPassenger();
         void consumeFuel();
         void passengerRide();
         void showInfo();
