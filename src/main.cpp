@@ -177,8 +177,8 @@ int main() {
             int new_player_position_x = player_position_x;
             int new_player_position_y = player_position_y + player.getSpeed();
             if (not detectPosition(new_player_position_x, new_player_position_y , track)) {
-                player.stop();
-                continue;
+                std::cout << "GAME OVER: Bump into a guard rail" << std::endl;
+                break;
             }
             player_position_x = new_player_position_x;
             player_position_y = new_player_position_y;
@@ -186,8 +186,8 @@ int main() {
             int new_player_position_x = player_position_x;
             int new_player_position_y = player_position_y - player.getSpeed();
             if (not detectPosition(new_player_position_x, new_player_position_y , track)) {
-                player.stop();
-                continue;
+                std::cout << "GAME OVER: Bump into a guard rail" << std::endl;
+                break;
             }
             player_position_x = new_player_position_x;
             player_position_y = new_player_position_y;
@@ -195,8 +195,8 @@ int main() {
             int new_player_position_x = player_position_x + player.getSpeed();
             int new_player_position_y = player_position_y;
             if (not detectPosition(new_player_position_x, new_player_position_y, track)) {
-                player.stop();
-                continue;
+                std::cout << "GAME OVER: Bump into a guard rail" << std::endl;
+                break;
             }
             player_position_x = new_player_position_x;
             player_position_y = new_player_position_y;
@@ -204,8 +204,8 @@ int main() {
             int new_player_position_x = player_position_x - player.getSpeed();
             int new_player_position_y = player_position_y;
             if (not detectPosition(new_player_position_x, new_player_position_y, track)) {
-                player.stop();
-                continue;
+                std::cout << "GAME OVER: Bump into a guard rail" << std::endl;
+                break;
             }
             player_position_x = new_player_position_x;
             player_position_y = new_player_position_y;
