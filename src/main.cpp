@@ -168,14 +168,12 @@ int main() {
         }
 
         if ((player_position_x > 20) && (player_position_x < 60) && (player_position_y > 18) && (player_position_y < 22)) {
-            player.pay(direction_fine);
+            if (direction == "-x") {
+                player.pay(direction_fine);
+            }
         }
 
-        if (player.getSpeed() >speed_limit) {
-            player.pay(speed_limit_fine);
-        }
-
-        if (player.getSpeed() >speed_limit) {
+        if (player.getSpeed() > speed_limit) {
             player.pay(speed_limit_fine);
         }
 
