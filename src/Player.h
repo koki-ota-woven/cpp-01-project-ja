@@ -9,11 +9,14 @@
 
 class Player {
     private:
+        std::string car;
         int speed;
         int fuel;
         int passenger;
         int balance;
         int max_speed;
+        int fuel_efficiency;
+        int acceleration;
 
     public:
         Player(char car_type);

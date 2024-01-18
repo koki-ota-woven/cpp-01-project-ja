@@ -11,10 +11,11 @@ const int reload_time = 1000;
 const char fuel_station_icon = 'F';
 const char passenger_icon = 'P';
 const char goal_icon = 'G';
+const char player_icon = 'O';
 const int gas_price = 20;
 const int direction_fine = 50;
 const int speed_limit_fine = 10;
-const int speed_limit = 3;
+const int speed_limit = 4;
 
 std::atomic_bool inputReady(false);
 std::string input;
@@ -107,9 +108,9 @@ bool movePlayer(int& player_position_x, int& player_position_y, const std::strin
 
 int main() {
     char car_type;
-    std::cout << "T(Toyota) or H(Honda): ";
+    std::cout << "G (Gasoline) or H (Hybrid): ";
     std::cin >> car_type;
-    if (car_type != 'T' && car_type != 'H'){
+    if (car_type != 'G' && car_type != 'H'){
         std::cout << "Please select T(Toyota) or H(Honda)" << std::endl;
         return 1;
     }
@@ -144,11 +145,11 @@ int main() {
             track[passenger_position_y][passenger_position_x] = passenger_icon;
         }
         track[fuel_position_y][fuel_position_x] = fuel_station_icon;
-        track[player_position_y][player_position_x] = car_type;
+        track[player_position_y][player_position_x] = player_icon;
         track[goal_position_y][goal_position_x] = goal_icon;
 
         std::cout << "Mission: Take a passenger to goal" << std::endl;
-        std::cout << "<ICON> " << car_type <<  ": car, P: passenger, F: gas station, G: Goal" << std::endl;
+        std::cout << "<ICON> O: player, F: gas station, P: passenger, G: Goal" << std::endl;
         std::cout << "Weather: " << weather << std::endl;
         printRace(track);
         player.showInfo();

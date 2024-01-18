@@ -3,15 +3,19 @@
 
 Player::Player(char car_type) {
     speed = 1;
-    if (car_type == 'T') {
-        fuel = 150;
-        max_speed = 4;
-    } else if (car_type == 'H'){
-        fuel = 100;
-        max_speed = 5;
-    }
+    fuel = 100;
+    max_speed = 5;
     passenger = 0;
     balance = 100;
+    if (car_type == 'G') {
+        car = "Gasoline";
+        fuel_efficiency = 2;
+        acceleration = 2;
+    } else if (car_type == 'H'){
+        car = "Hybrid";
+        fuel_efficiency = 1;
+        acceleration = 1;
+    }
 }
 
 std::string Player::goLeft() {
@@ -32,7 +36,7 @@ std::string Player::goDown() {
 
 void Player::accelerate() {
     if (speed < max_speed){
-        speed += 1;
+        speed += acceleration;
     }
 }
 
@@ -64,7 +68,7 @@ int Player::getPassenger() {
 }
 
 void Player::consumeFuel() {
-    fuel -= speed;
+    fuel -= speed * fuel_efficiency;
 }
 
 void Player::pay(int cost) {
@@ -81,8 +85,9 @@ void Player::passengerRide() {
 }
 
 void Player::showInfo() {
-    std::cout << "Current speed: " << speed
+    std::cout <<"Car type: " << car
+        << ",   Current speed: " << speed
         << ",   Fuel level: " << fuel
         << ",   Passenger: " << passenger
-        << ",   Balance: " << balance << std::endl;
+        << ",   Balance: $" << balance << std::endl;
 }
