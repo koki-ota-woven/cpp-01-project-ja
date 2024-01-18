@@ -12,6 +12,10 @@ const char player_icon = 'O';
 const char fuel_station_icon = 'F';
 const char passenger_icon = 'P';
 const char goal_icon = 'G';
+const int gas_price = 20;
+const int direction_fine = 50;
+const int speed_limit_fine = 10;
+const int speed_limit = 3;
 
 std::atomic_bool inputReady(false);
 std::string input;
@@ -64,7 +68,11 @@ void initRace(char track[row][column]) {
 }
 
 bool detectPosition(int player_position_x, int player_position_y, char track[row][column]){
-    if (track[player_position_y][player_position_x] == '-') {
+    if (player_position_x > column || player_position_x < 0){
+        return false;
+    } else if (player_position_y > row || player_position_y < 0){
+        return false;
+    } if (track[player_position_y][player_position_x] == '-') {
         return false;
     } else if (track[player_position_y][player_position_x] == '|'){
         return false;
@@ -87,11 +95,6 @@ int main() {
     std::string direction = "+y";
 
     while (true) {  // Continuous game loop
-        if (player.getFuel() <= 0) {
-            std::cout << "GAME OVER: There is no fuel" << std::endl;
-            break;
-        }
-
         char track[row][column];
         initRace(track);
 
@@ -113,15 +116,34 @@ int main() {
 
         if ((player_position_x == fuel_position_x) && (player_position_y == fuel_position_y)) {
             player.refuel();
+            player.pay(gas_price);
         }
 
         if ((player_position_x == passenger_position_x) && (player_position_y == passenger_position_y)) {
             player.passengerRide();
         }
 
+        if ((player_position_x > 20) && (player_position_x < 60) && (player_position_y > 18) && (player_position_y < 22)) {
+            player.pay(direction_fine);
+        }
+
+        if (player.getSpeed() >speed_limit) {
+            player.pay(speed_limit_fine);
+        }
+
         if ((player.getPassenger() == 1) &&
             (player_position_x == goal_position_x) && (player_position_y == goal_position_y)) {
             std::cout << "Clear: Well Done!!" << std::endl;
+            break;
+        }
+
+        if (player.getFuel() < 0) {
+            std::cout << "GAME OVER: There is no fuel" << std::endl;
+            break;
+        }
+
+        if (player.getBalance() < 0) {
+            std::cout << "GAME OVER: Bankrupt" << std::endl;
             break;
         }
 
@@ -152,29 +174,41 @@ int main() {
         }
 
         if (direction == "+y") {
-            if (not detectPosition(player_position_x, player_position_y + 1, track)) {
+            int new_player_position_x = player_position_x;
+            int new_player_position_y = player_position_y + player.getSpeed();
+            if (not detectPosition(new_player_position_x, new_player_position_y , track)) {
                 player.stop();
                 continue;
             }
-            player_position_y += player.getSpeed();
+            player_position_x = new_player_position_x;
+            player_position_y = new_player_position_y;
         } else if (direction == "-y") {
-            if (not detectPosition(player_position_x, player_position_y - 1, track)) {
+            int new_player_position_x = player_position_x;
+            int new_player_position_y = player_position_y - player.getSpeed();
+            if (not detectPosition(new_player_position_x, new_player_position_y , track)) {
                 player.stop();
                 continue;
             }
-            player_position_y -= player.getSpeed();
+            player_position_x = new_player_position_x;
+            player_position_y = new_player_position_y;
         } else if (direction == "+x") {
-            if (not detectPosition(player_position_x + 1, player_position_y, track)) {
+            int new_player_position_x = player_position_x + player.getSpeed();
+            int new_player_position_y = player_position_y;
+            if (not detectPosition(new_player_position_x, new_player_position_y, track)) {
                 player.stop();
                 continue;
             }
-            player_position_x += player.getSpeed();
+            player_position_x = new_player_position_x;
+            player_position_y = new_player_position_y;
         } else if (direction == "-x") {
-            if (not detectPosition(player_position_x - 1, player_position_y, track)) {
+            int new_player_position_x = player_position_x - player.getSpeed();
+            int new_player_position_y = player_position_y;
+            if (not detectPosition(new_player_position_x, new_player_position_y, track)) {
                 player.stop();
                 continue;
             }
-            player_position_x -= player.getSpeed();
+            player_position_x = new_player_position_x;
+            player_position_y = new_player_position_y;
         }
     }
 

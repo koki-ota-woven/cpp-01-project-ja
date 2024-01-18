@@ -5,6 +5,8 @@ Player::Player() {
     speed = 1;
     fuel = 100;
     passenger = 0;
+    balance = 100;
+    max_speed = 5;
 }
 
 std::string Player::goLeft() {
@@ -24,7 +26,7 @@ std::string Player::goDown() {
 }
 
 void Player::accelerate() {
-    if (speed <= 3){
+    if (speed < max_speed){
         speed += 1;
     }
 }
@@ -60,11 +62,22 @@ void Player::consumeFuel() {
     fuel -= speed;
 }
 
+void Player::pay(int cost) {
+    balance -= cost;
+}
+
+int Player::getBalance() {
+    return balance;
+}
+
 void Player::passengerRide() {
     passenger += 1;
     std::cout << "A passenger rides" << std::endl;
 }
 
 void Player::showInfo() {
-    std::cout << "Current speed: " << speed << ",   Fuel level: " << fuel << ",   Passenger: " << passenger << std::endl;
+    std::cout << "Current speed: " << speed
+        << ",   Fuel level: " << fuel
+        << ",   Passenger: " << passenger
+        << ",   Balance: " << balance << std::endl;
 }

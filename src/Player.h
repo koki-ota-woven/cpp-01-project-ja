@@ -12,6 +12,8 @@ class Player {
         int speed;
         int fuel;
         int passenger;
+        int balance;
+        int max_speed;
 
     public:
         Player();
@@ -26,8 +28,10 @@ class Player {
         int getSpeed();
         int getFuel();
         int getPassenger();
+        int getBalance();
         void consumeFuel();
         void passengerRide();
+        void pay(int cost);
         void showInfo();
 };
 
