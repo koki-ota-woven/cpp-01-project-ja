@@ -37,22 +37,39 @@ void printRace(char array1[row][column]) {
     }
 }
 
-void initRace(char array2[row][column]) {
+void initRace(char track[row][column]) {
     for (int i = 0; i < row; i++) {
         for (int j = 0; j < column; j++) {
             if (i == 0) {
-                array2[i][j] = '-';
+                track[i][j] = '-';
             } else if (i == row-1) {
-                array2[i][j] = '-';
+                track[i][j] = '-';
             } else if (j == 0) {
-                array2[i][j] = '|';
+                track[i][j] = '|';
+            } else if (i == 18 && j > 20 && j < 60) {
+                track[i][j] = '-';
+            } else if (i == 22 && j > 20 && j < 60) {
+                track[i][j] = '-';
+            } else if (i == 20 && j > 25 && j < 40) {
+                track[i][j] = '=';
+            } else if (i == 20 && j == 40) {
+                track[i][j] = '>';
             } else if (j == column-1) {
-                array2[i][j] = '|';
+                track[i][j] = '|';
             } else {
-                array2[i][j] = ' ';
+                track[i][j] = ' ';
             }
         }
     }
+}
+
+bool detectPosition(int player_position_x, int player_position_y, char track[row][column]){
+    if (track[player_position_y][player_position_x] == '-') {
+        return false;
+    } else if (track[player_position_y][player_position_x] == '|'){
+        return false;
+    }
+    return true;
 }
 
 int main() {
@@ -63,7 +80,7 @@ int main() {
     int player_position_y = 1;
     int fuel_position_x = 30;
     int fuel_position_y = 30;
-    int passenger_position_x = 40;
+    int passenger_position_x = 50;
     int passenger_position_y = 20;
     int goal_position_x = 95;
     int goal_position_y = 46;
@@ -135,12 +152,28 @@ int main() {
         }
 
         if (direction == "+y") {
+            if (not detectPosition(player_position_x, player_position_y + 1, track)) {
+                player.stop();
+                continue;
+            }
             player_position_y += player.getSpeed();
         } else if (direction == "-y") {
+            if (not detectPosition(player_position_x, player_position_y - 1, track)) {
+                player.stop();
+                continue;
+            }
             player_position_y -= player.getSpeed();
         } else if (direction == "+x") {
+            if (not detectPosition(player_position_x + 1, player_position_y, track)) {
+                player.stop();
+                continue;
+            }
             player_position_x += player.getSpeed();
         } else if (direction == "-x") {
+            if (not detectPosition(player_position_x - 1, player_position_y, track)) {
+                player.stop();
+                continue;
+            }
             player_position_x -= player.getSpeed();
         }
     }
