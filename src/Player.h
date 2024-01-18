@@ -16,7 +16,7 @@ class Player {
         int max_speed;
 
     public:
-        Player();
+        Player(char car_type);
         std::string goLeft();
         std::string goRight();
         std::string goUp();

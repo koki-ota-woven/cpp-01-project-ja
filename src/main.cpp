@@ -8,7 +8,6 @@
 const int row = 50;
 const int column = 100;
 const int reload_time = 1000;
-const char player_icon = 'O';
 const char fuel_station_icon = 'F';
 const char passenger_icon = 'P';
 const char goal_icon = 'G';
@@ -80,9 +79,43 @@ bool detectPosition(int player_position_x, int player_position_y, char track[row
     return true;
 }
 
+bool movePlayer(int& player_position_x, int& player_position_y, const std::string& direction, char track[row][column], Player player) {
+    int new_player_position_x = player_position_x;
+    int new_player_position_y = player_position_y;
+
+    if (direction == "+y") {
+        new_player_position_y += player.getSpeed();
+    } else if (direction == "-y") {
+        new_player_position_y -= player.getSpeed();
+    } else if (direction == "+x") {
+        new_player_position_x += player.getSpeed();
+    } else if (direction == "-x") {
+        new_player_position_x -= player.getSpeed();
+    }
+
+    if (!detectPosition(new_player_position_x, new_player_position_y, track)) {
+        std::cout << "GAME OVER: Bump into a guard rail" << std::endl;
+        player.stop();
+        return false;
+    } else {
+        player_position_x = new_player_position_x;
+        player_position_y = new_player_position_y;
+        return true;
+    }
+}
+
+
 int main() {
+    char car_type;
+    std::cout << "T(Toyota) or H(Honda): ";
+    std::cin >> car_type;
+    if (car_type != 'T' && car_type != 'H'){
+        std::cout << "Please select T(Toyota) or H(Honda)" << std::endl;
+        return 1;
+    }
+
     std::thread inputThread(getInput);  // Start a thread for user input
-    Player player;
+    Player player(car_type);
 
     int player_position_x = 5;
     int player_position_y = 1;
@@ -93,8 +126,17 @@ int main() {
     int goal_position_x = 95;
     int goal_position_y = 46;
     std::string direction = "+y";
+    std::string weather = "Sunny";
 
     while (true) {  // Continuous game loop
+        std::srand(static_cast<unsigned>(std::time(nullptr)));
+        int weather_number = std::rand() % 10;
+        if (weather_number > 7){
+            weather = "Rain";
+        } else {
+            weather = "Sunny";
+        }
+
         char track[row][column];
         initRace(track);
 
@@ -102,11 +144,12 @@ int main() {
             track[passenger_position_y][passenger_position_x] = passenger_icon;
         }
         track[fuel_position_y][fuel_position_x] = fuel_station_icon;
-        track[player_position_y][player_position_x] = player_icon;
+        track[player_position_y][player_position_x] = car_type;
         track[goal_position_y][goal_position_x] = goal_icon;
 
         std::cout << "Mission: Take a passenger to goal" << std::endl;
-        std::cout << "ICON  O: player, P: passenger, F: gas station, G: Goal" << std::endl;
+        std::cout << "<ICON> " << car_type <<  ": car, P: passenger, F: gas station, G: Goal" << std::endl;
+        std::cout << "Weather: " << weather << std::endl;
         printRace(track);
         player.showInfo();
         std::cout << std::endl << std::endl;
@@ -125,6 +168,10 @@ int main() {
 
         if ((player_position_x > 20) && (player_position_x < 60) && (player_position_y > 18) && (player_position_y < 22)) {
             player.pay(direction_fine);
+        }
+
+        if (player.getSpeed() >speed_limit) {
+            player.pay(speed_limit_fine);
         }
 
         if (player.getSpeed() >speed_limit) {
@@ -162,6 +209,9 @@ int main() {
             } else if (input == "d") {
                 player.decelerate();
             } else if (input == "s") {
+                if (weather == "Rain"){
+                    continue;
+                }
                 player.stop();
             } else if (input == "r") {
                 player.refuel();
@@ -173,42 +223,8 @@ int main() {
             inputReady = false;  // Reset the flag
         }
 
-        if (direction == "+y") {
-            int new_player_position_x = player_position_x;
-            int new_player_position_y = player_position_y + player.getSpeed();
-            if (not detectPosition(new_player_position_x, new_player_position_y , track)) {
-                std::cout << "GAME OVER: Bump into a guard rail" << std::endl;
-                break;
-            }
-            player_position_x = new_player_position_x;
-            player_position_y = new_player_position_y;
-        } else if (direction == "-y") {
-            int new_player_position_x = player_position_x;
-            int new_player_position_y = player_position_y - player.getSpeed();
-            if (not detectPosition(new_player_position_x, new_player_position_y , track)) {
-                std::cout << "GAME OVER: Bump into a guard rail" << std::endl;
-                break;
-            }
-            player_position_x = new_player_position_x;
-            player_position_y = new_player_position_y;
-        } else if (direction == "+x") {
-            int new_player_position_x = player_position_x + player.getSpeed();
-            int new_player_position_y = player_position_y;
-            if (not detectPosition(new_player_position_x, new_player_position_y, track)) {
-                std::cout << "GAME OVER: Bump into a guard rail" << std::endl;
-                break;
-            }
-            player_position_x = new_player_position_x;
-            player_position_y = new_player_position_y;
-        } else if (direction == "-x") {
-            int new_player_position_x = player_position_x - player.getSpeed();
-            int new_player_position_y = player_position_y;
-            if (not detectPosition(new_player_position_x, new_player_position_y, track)) {
-                std::cout << "GAME OVER: Bump into a guard rail" << std::endl;
-                break;
-            }
-            player_position_x = new_player_position_x;
-            player_position_y = new_player_position_y;
+        if (not movePlayer(player_position_x, player_position_y, direction, track, player)){
+            break;
         }
     }
 
