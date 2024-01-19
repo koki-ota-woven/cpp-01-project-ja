@@ -16,6 +16,8 @@ const int gas_price = 20;
 const int direction_fine = 50;
 const int speed_limit_fine = 10;
 const int speed_limit = 4;
+const int sunrise_time = 7;
+const int sunset_time = 19;
 
 std::atomic_bool inputReady(false);
 std::string input;
@@ -108,8 +110,6 @@ bool movePlayer(int& player_position_x, int& player_position_y, const std::strin
 
 int main() {
     char car_type;
-    std::chrono::system_clock::time_point start_time, end_time;
-    start_time = std::chrono::system_clock::now();
 
     std::cout << "G (Gasoline) or H (Hybrid): ";
     std::cin >> car_type;
@@ -118,7 +118,7 @@ int main() {
         return 1;
     }
 
-    std::thread inputThread(getInput);  // Start a thread for user input
+    std::thread inputThread(getInput);
     Player player(car_type);
 
     int player_position_x = 5;
@@ -131,12 +131,21 @@ int main() {
     int passenger_position_y = 20;
     int goal_position_x = 95;
     int goal_position_y = 46;
+    int time = 7;
     char padding_char;
     std::string direction = "+y";
     std::string weather;
     std::string day_state;
 
-    while (true) {  // Continuous game loop
+    while (true) {
+        if (time >= sunrise_time && time <= sunset_time ){
+            padding_char = ' ';
+            day_state = "Daytime";
+        } else {
+            padding_char = 'X';
+            day_state = "Night";
+        }
+
         std::srand(static_cast<unsigned>(std::time(nullptr)));
         int weather_number = std::rand() % 10;
         if (weather_number > 8){
@@ -145,24 +154,12 @@ int main() {
             weather = "Sunny";
         }
 
-
-        end_time = std::chrono::system_clock::now();
-        double time = static_cast<double>(std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count() / 1000000.0);
-        if (time < 16){
-            padding_char = ' ';
-            day_state = "Daytime";
-        } else if (time < 24){
-            padding_char = 'X';
-            day_state = "Night";
-        } else {
-            padding_char = ' ';
-            day_state = "Daytime";
-            start_time = std::chrono::system_clock::now();
-        }
+        std::cout << "Mission: Take a passenger to goal" << std::endl;
+        std::cout << "<ICON> O: player, F: gas station, P: passenger, G: Goal" << std::endl;
+        std::cout << "Time: " << time << ":00      State: " << day_state << "       Weather: " << weather<< std::endl;
 
         char track[row][column];
         initRace(track, padding_char);
-
         if (player.getPassenger() == 0) {
             track[passenger_position_y][passenger_position_x] = passenger_icon;
         }
@@ -170,13 +167,9 @@ int main() {
         track[fuel_station_2_y][fuel_station_2_x] = fuel_station_icon;
         track[player_position_y][player_position_x] = player_icon;
         track[goal_position_y][goal_position_x] = goal_icon;
-
-        std::cout << "Mission: Take a passenger to goal" << std::endl;
-        std::cout << "<ICON> O: player, F: gas station, P: passenger, G: Goal" << std::endl;
-        std::cout << "Weather: " << weather << std::endl;
-        std::cout << "Time: " << (static_cast<int>(time) + 6) % 24 << ":00      State: " << day_state << std::endl;
         printRace(track);
         player.showInfo();
+
         if ((player_position_x > 20) && (player_position_x < 60) && (player_position_y > 18) && (player_position_y < 22)) {
             if (direction == "-x") {
                 std::cout << "You break the one-direction path rule, You have to pay $" << direction_fine << std::endl;
@@ -189,9 +182,14 @@ int main() {
             player.pay(speed_limit_fine);
         }
 
-
         player.consumeFuel();
         std::this_thread::sleep_for(std::chrono::milliseconds(reload_time));
+
+        if (time >= 23) {
+            time = 0;
+        } else{
+            time += 1;
+        }
 
         if ((player_position_x == fuel_station_1_x) && (player_position_y == fuel_station_1_y)) {
             player.refuel();
@@ -238,18 +236,16 @@ int main() {
             } else if (input == "d") {
                 player.decelerate();
             } else if (input == "s") {
-                if (weather == "Rain"){
-                    continue;
-                }
+                if (weather == "Rain") continue;
                 player.stop();
             } else if (input == "r") {
                 player.refuel();
             } else if (input == "q") {
-                break;  // Exit the game loop when the user enters "q"
+                break;
             } else {
                 std::cout << "!!!!Invalid command!!!!" << std::endl;
             }
-            inputReady = false;  // Reset the flag
+            inputReady = false;
         }
         std::cout << std::endl << std::endl;
 
@@ -258,6 +254,6 @@ int main() {
         }
     }
 
-    inputThread.join();  // Wait for the input thread to finish
+    inputThread.join();
     return 0;
 }
