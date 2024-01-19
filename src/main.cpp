@@ -168,7 +168,7 @@ int main() {
 
         // 現在のゲーム状況の出力
         std::cout << "Mission: Take a passenger to goal" << std::endl;
-        std::cout << "<ICON> O: player, F: gas station, P: passenger, G: Goal,  ====>: One Direction Area" << std::endl;
+        std::cout << "<ICON>  O: player,  F: gas station,  P: passenger,  G: Goal,  ====>: One Direction Area" << std::endl;
         std::cout << "Time: " << time << ":00      State: " << day_state << "       Weather: " << weather<< std::endl;
 
         // 最新の状態での地図の描画の実行
