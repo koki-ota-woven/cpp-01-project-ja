@@ -123,7 +123,7 @@ int main() {
 
     int player_position_x = 5;
     int player_position_y = 1;
-    int fuel_station_1_x = 30;
+    int fuel_station_1_x = 50;
     int fuel_station_1_y = 30;
     int fuel_station_2_x = 10;
     int fuel_station_2_y = 10;
