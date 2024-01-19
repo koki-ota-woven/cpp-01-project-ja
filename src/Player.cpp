@@ -1,6 +1,7 @@
 #include "Player.h"
 #include <iostream>
 
+// ガソリンカーかハイブリッドカーを作るコンストラクタ
 Player::Player(char car_type) {
     speed = 1;
     fuel = 100;
