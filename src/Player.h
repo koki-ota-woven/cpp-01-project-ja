@@ -1,7 +1,3 @@
-//
-// Created by koki-ota on 23/12/27.
-//
-
 #ifndef PLAYER_H
 #define PLAYER_H
 
