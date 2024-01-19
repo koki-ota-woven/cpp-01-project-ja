@@ -41,7 +41,7 @@ void printRace(char array1[row][column]) {
     }
 }
 
-void initRace(char track[row][column]) {
+void initRace(char track[row][column], char padding_char) {
     for (int i = 0; i < row; i++) {
         for (int j = 0; j < column; j++) {
             if (i == 0) {
@@ -61,7 +61,7 @@ void initRace(char track[row][column]) {
             } else if (j == column-1) {
                 track[i][j] = '|';
             } else {
-                track[i][j] = ' ';
+                track[i][j] = padding_char;
             }
         }
     }
@@ -108,6 +108,9 @@ bool movePlayer(int& player_position_x, int& player_position_y, const std::strin
 
 int main() {
     char car_type;
+    std::chrono::system_clock::time_point start_time, end_time;
+    start_time = std::chrono::system_clock::now();
+
     std::cout << "G (Gasoline) or H (Hybrid): ";
     std::cin >> car_type;
     if (car_type != 'G' && car_type != 'H'){
@@ -126,8 +129,10 @@ int main() {
     int passenger_position_y = 20;
     int goal_position_x = 95;
     int goal_position_y = 46;
+    char padding_char;
     std::string direction = "+y";
-    std::string weather = "Sunny";
+    std::string weather;
+    std::string date = "Daytime";
 
     while (true) {  // Continuous game loop
         std::srand(static_cast<unsigned>(std::time(nullptr)));
@@ -138,8 +143,18 @@ int main() {
             weather = "Sunny";
         }
 
+
+        end_time = std::chrono::system_clock::now();
+        double time = static_cast<double>(std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count() / 1000.0);
+        int daytime_detection = static_cast<int>(time) % 8000;
+        if (daytime_detection > 0){
+            padding_char = 'X';
+        } else {
+            padding_char = ' ';
+        }
+
         char track[row][column];
-        initRace(track);
+        initRace(track, padding_char);
 
         if (player.getPassenger() == 0) {
             track[passenger_position_y][passenger_position_x] = passenger_icon;
@@ -151,6 +166,7 @@ int main() {
         std::cout << "Mission: Take a passenger to goal" << std::endl;
         std::cout << "<ICON> O: player, F: gas station, P: passenger, G: Goal" << std::endl;
         std::cout << "Weather: " << weather << std::endl;
+        std::cout << "Time: " << time/1000 << "sec" << std::endl;
         printRace(track);
         player.showInfo();
         std::cout << std::endl << std::endl;
