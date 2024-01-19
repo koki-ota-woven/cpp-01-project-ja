@@ -8,6 +8,8 @@
 - プレイヤーは車を操作し、街の中を移動します。
 - ゲームの目的は、街の中にいる人をゴールまで届けることです。
 - 最初にガソリンカーかハイブリッドカーを選択します。
+- 雨のときは急ブレーキができません。
+- 夜になると視界が悪化します。
 - 一方通行エリアで逆走した場合、$50の罰金です。
 - スピード釣果の場合は$10の罰金です。
 - ガソリンステーションは$20でガソリンを満タンにできます。
@@ -31,7 +33,7 @@ cd cpp-01-project-ja
 
 
 3. ソースコードをコンパイルします。
-    - GCCを使用する場合:
+- GCCを使用する場合:
 ```bash
 g++ -std=c++17 -o game src/main.cpp src/Player.cpp
 ```
@@ -39,6 +41,11 @@ g++ -std=c++17 -o game src/main.cpp src/Player.cpp
 - Clangを使用する場合:
 ```bash
 clang++ src/main.cpp src/Player.cpp -o game
+```
+
+- MinGWを使用する場合:
+```bash
+g++ -std=c++17 -o game.exe src/main.cpp src/Player.cpp
 ```
 
 

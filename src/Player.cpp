@@ -4,7 +4,7 @@
 Player::Player(char car_type) {
     speed = 1;
     fuel = 100;
-    max_speed = 5;
+    max_speed = 6;
     passenger = 0;
     balance = 100;
     if (car_type == 'G') {

@@ -123,8 +123,10 @@ int main() {
 
     int player_position_x = 5;
     int player_position_y = 1;
-    int fuel_position_x = 30;
-    int fuel_position_y = 30;
+    int fuel_station_1_x = 30;
+    int fuel_station_1_y = 30;
+    int fuel_station_2_x = 10;
+    int fuel_station_2_y = 10;
     int passenger_position_x = 50;
     int passenger_position_y = 20;
     int goal_position_x = 95;
@@ -132,12 +134,12 @@ int main() {
     char padding_char;
     std::string direction = "+y";
     std::string weather;
-    std::string date = "Daytime";
+    std::string day_state;
 
     while (true) {  // Continuous game loop
         std::srand(static_cast<unsigned>(std::time(nullptr)));
         int weather_number = std::rand() % 10;
-        if (weather_number > 7){
+        if (weather_number > 8){
             weather = "Rain";
         } else {
             weather = "Sunny";
@@ -145,12 +147,17 @@ int main() {
 
 
         end_time = std::chrono::system_clock::now();
-        double time = static_cast<double>(std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count() / 1000.0);
-        int daytime_detection = static_cast<int>(time) % 8000;
-        if (daytime_detection > 0){
+        double time = static_cast<double>(std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count() / 1000000.0);
+        if (time < 16){
+            padding_char = ' ';
+            day_state = "Daytime";
+        } else if (time < 24){
             padding_char = 'X';
+            day_state = "Night";
         } else {
             padding_char = ' ';
+            day_state = "Daytime";
+            start_time = std::chrono::system_clock::now();
         }
 
         char track[row][column];
@@ -159,38 +166,45 @@ int main() {
         if (player.getPassenger() == 0) {
             track[passenger_position_y][passenger_position_x] = passenger_icon;
         }
-        track[fuel_position_y][fuel_position_x] = fuel_station_icon;
+        track[fuel_station_1_y][fuel_station_1_x] = fuel_station_icon;
+        track[fuel_station_2_y][fuel_station_2_x] = fuel_station_icon;
         track[player_position_y][player_position_x] = player_icon;
         track[goal_position_y][goal_position_x] = goal_icon;
 
         std::cout << "Mission: Take a passenger to goal" << std::endl;
         std::cout << "<ICON> O: player, F: gas station, P: passenger, G: Goal" << std::endl;
         std::cout << "Weather: " << weather << std::endl;
-        std::cout << "Time: " << time/1000 << "sec" << std::endl;
+        std::cout << "Time: " << (static_cast<int>(time) + 6) % 24 << ":00      State: " << day_state << std::endl;
         printRace(track);
         player.showInfo();
-        std::cout << std::endl << std::endl;
+        if ((player_position_x > 20) && (player_position_x < 60) && (player_position_y > 18) && (player_position_y < 22)) {
+            if (direction == "-x") {
+                std::cout << "You break the one-direction path rule, You have to pay $" << direction_fine << std::endl;
+                player.pay(direction_fine);
+            }
+        }
+
+        if (player.getSpeed() > speed_limit) {
+            std::cout << "You exceeded the speed limit 4, You have to pay $" << speed_limit_fine << std::endl;
+            player.pay(speed_limit_fine);
+        }
+
 
         player.consumeFuel();
         std::this_thread::sleep_for(std::chrono::milliseconds(reload_time));
 
-        if ((player_position_x == fuel_position_x) && (player_position_y == fuel_position_y)) {
+        if ((player_position_x == fuel_station_1_x) && (player_position_y == fuel_station_1_y)) {
+            player.refuel();
+            player.pay(gas_price);
+        }
+
+        if ((player_position_x == fuel_station_2_x) && (player_position_y == fuel_station_2_y)) {
             player.refuel();
             player.pay(gas_price);
         }
 
         if ((player_position_x == passenger_position_x) && (player_position_y == passenger_position_y)) {
             player.passengerRide();
-        }
-
-        if ((player_position_x > 20) && (player_position_x < 60) && (player_position_y > 18) && (player_position_y < 22)) {
-            if (direction == "-x") {
-                player.pay(direction_fine);
-            }
-        }
-
-        if (player.getSpeed() > speed_limit) {
-            player.pay(speed_limit_fine);
         }
 
         if ((player.getPassenger() == 1) &&
@@ -237,6 +251,7 @@ int main() {
             }
             inputReady = false;  // Reset the flag
         }
+        std::cout << std::endl << std::endl;
 
         if (not movePlayer(player_position_x, player_position_y, direction, track, player)){
             break;
